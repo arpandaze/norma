@@ -146,9 +146,6 @@ def recordData():
 
             noOfStates = len(playingGame.game_history)
 
-        
-            
-
             for k in range(noOfStates):
                 value = []
                 if k % 2 == 0:
@@ -184,12 +181,6 @@ def recordData():
                 newValue = np.concatenate((value, np.array(newValue)), axis=None)
                 writer.writerow(newValue)
 
-    #     playingGame.game_history(i)
-    # print(playingGame.game_status_check())
-    # print(playingGame.game_state)
-    # print(count)
-    # print(len(playingGame.game_history))
-    # print(pgn)
 
 if __name__=="__main__":
     recordData()
