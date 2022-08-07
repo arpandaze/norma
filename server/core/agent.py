@@ -1,8 +1,10 @@
 from random import randint
 from game import Game
+from enums import GameState
 
 import csv
 from functools import reduce
+import numpy as np
 #agent is the player that plays games and then, stores the data for training.
 
 #use this to generate the training data, so generate the self play data, and the montecarlo search tree data. 
@@ -109,43 +111,79 @@ def recordData():
     pgn = ""
 
     # gameStatus = agentGoat.move(playingGame)
-    # for i in range(NO_OF_PLAY_DATA):
-        # agentGoat.getState()
-        # agentTiger.moveState()
-    while not playingGame.game_status_check()["decided"]:
-        gameStatus, playingGame, pgn = agentGoat.move(playingGame, pgn)
-        gameStatus, playingGame, pgn = agentTiger.move(playingGame, pgn)
-        count += 1
-        # print(playingGame.game_history)
-        if count > 100:
-            break
-    
-    #Generate the Data for Training:
-     #[playerGoat, plaerTiger] [state for Tiger], [state for Goat] [1  or 0]
+    with open("../data/valueNetworkTrain.csv", "w") as f:
 
-    # noOfStates = len(playingGame.game_history)
-    # for k in range(noOfStates):
-    #     print(playingGame.game_history[k])
+        writer = csv.writer(f)
+        header = ["Tiger", "Goat"]
 
-    # with open("../data/valueNetworkTrain.csv", "w") as f:
-    #     writer = csv.writer(f)
-    #     header = ["Tiger", "Goat"]
-    #     for i in range (1,6):
-    #         for j in range (1,6):
-    #             header.append(str(i) + "x" + str(j))
-        
-    #     header += ["Value Goat", "Value Tiger"]
+        goatHeader = []
+        tigerHeader = []
 
-    #     value = []
-    #     for k in range(noOfStates):
-    #         if k % 2 == 0:
-    #             value += [0 , 1]
+        for i in range (1,6):
+            for j in range (1,6):
+                goatHeader.append("Goat:" + str(i) + "x" + str(j))
+                tigerHeader.append("Tiger:" + str(i) + "x" + str(j))
+
+        header += goatHeader
+        header += tigerHeader
+        header += ["Value Goat", "Value Tiger"]
+
+        writer.writerow(header)
+
+        for _ in range(NO_OF_PLAY_DATA):
+            # agentGoat.getState()
+            # agentTiger.moveState()
+            while not playingGame.game_status_check()["decided"]:
+                gameStatus, playingGame, pgn = agentGoat.move(playingGame, pgn)
+                gameStatus, playingGame, pgn = agentTiger.move(playingGame, pgn)
+                count += 1
+                # print(playingGame.game_history)
+                if count > 100:
+                    break
             
-    #         flattenBoard = reduce(lambda z, y :z + y, playingGame.game_history[k])
-    #         print(k)
-    #         print(flattenBoard)
-    #     writer.writerow()
-    
+            #Generate the Data for Training:
+            #[playerGoat, plaerTiger] [state for Tiger], [state for Goat] [1  or 0]
+
+            noOfStates = len(playingGame.game_history)
+
+        
+            
+
+            for k in range(noOfStates):
+                value = []
+                if k % 2 == 0:
+                    value.append(0)
+                    value.append(1)
+                else: 
+                    value.append(1)
+                    value.append(0)
+
+                flattenBoard = np.array(reduce(lambda z, y :z + y, playingGame.game_history[k]))
+                goatBoard = (flattenBoard == 1) * 1
+                tigerBoard = (flattenBoard == -1) * 1
+
+                value = np.concatenate((np.array(value), goatBoard), axis=None)
+                value = np.concatenate((value, tigerBoard), axis=None)
+                
+                newValue = []
+                
+                if(playingGame.game_state == GameState.GOAT_WON.value):
+                    if k % 2 == 0:
+                        newValue += [1,-1]
+                    else: 
+                        newValue += [-1,1]
+
+                elif(playingGame.game_state == GameState.TIGER_WON.value):
+                    if k % 2 == 0:
+                        newValue += [-1,1]
+                    else: 
+                        newValue += [1,-1]
+                else:
+                        newValue += [0,0]
+                        
+                newValue = np.concatenate((value, np.array(newValue)), axis=None)
+                writer.writerow(newValue)
+
     #     playingGame.game_history(i)
     # print(playingGame.game_status_check())
     # print(playingGame.game_state)

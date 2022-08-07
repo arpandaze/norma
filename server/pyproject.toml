@@ -19,6 +19,7 @@ aiofiles = "^0.6.0"
 redis = "^4.3.4"
 hiredis = "^2.0.0"
 PyYAML = "^6.0"
+numpy = "^1.23.1"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.10.1"
