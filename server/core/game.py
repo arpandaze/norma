@@ -1,6 +1,7 @@
 import uuid
-from core.enums import GameState
-from core.exception import CommandException
+from enums import GameState
+from exception import CommandException
+import copy
 
 
 DEFAULT_GAME_LAYOUT = [
@@ -122,8 +123,8 @@ class Game:
         if not eval_move["isValid"]:
             raise CommandException(message="Invalid move!")
 
-        new_state = self.game_history[-1].copy()
-
+        new_state = copy.deepcopy(self.game_history[-1])
+        print("oldstate", self.game_history)
         if eval_move.get("isPlaceMove"):
             new_state[target[0]][target[1]] = 1
         else:
@@ -139,22 +140,28 @@ class Game:
         self.turn = -1 if self.turn == 1 else 1
 
         self.game_history.append(new_state)
-
+        print("newstate", self.game_history)
         return {"success": True}
 
     def check_move(self, source, target):
-        if source == None and self.turn == 1:
-            if self.goat_counter >= 20:
-                return {"isValid": False}
-            else:
-                return {"isValid": True, "isPlaceMove": True}
-
-        x = source[0]
-        y = source[1]
         m = target[0]
         n = target[1]
 
         position = self.game_history[-1]
+
+        if source == None and self.turn == 1:
+            if self.goat_counter >= 20:
+                return {"isValid": False}
+            else:
+                if position[m][n] != 0:
+                    reason = "Target already has a piece!"
+                    print(reason)
+                    return {"isValid": False}
+                
+                return {"isValid": True, "isPlaceMove": True}
+
+        x = source[0]
+        y = source[1]
 
         if x < 0 or y < 0 or m < 0 or n < 0 or x > 4 or y > 4 or m > 4 or n > 4:
             reason = "Cannot move outside the board!"
@@ -275,11 +282,14 @@ class Game:
 
     def game_status_check(self):
         if self.goat_captured >= 6:
+            self.game_state = GameState.TIGER_WON.value
             return {"decided": True, "won_by": -1}
 
         if self.turn == -1 and not self.tiger_can_move():
+            self.game_state = GameState.GOAT_WON.value
             return {"decided": True, "won_by": 1}
         elif self.turn == 1 and not self.goat_can_move():
+            self.game_state = GameState.TIGER_WON.value
             return {"decided": True, "won_by": -1}
 
         return {"decided": False}
