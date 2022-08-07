@@ -124,7 +124,7 @@ class Game:
             raise CommandException(message="Invalid move!")
 
         new_state = copy.deepcopy(self.game_history[-1])
-        print("oldstate", self.game_history)
+
         if eval_move.get("isPlaceMove"):
             new_state[target[0]][target[1]] = 1
         else:
@@ -140,7 +140,7 @@ class Game:
         self.turn = -1 if self.turn == 1 else 1
 
         self.game_history.append(new_state)
-        print("newstate", self.game_history)
+
         return {"success": True}
 
     def check_move(self, source, target):
