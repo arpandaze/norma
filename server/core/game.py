@@ -293,3 +293,37 @@ class Game:
             return {"decided": True, "won_by": -1}
 
         return {"decided": False}
+
+
+    def get_possible_state(self):
+
+        current_game = self.game_history[-1]
+        child = []
+
+        for i in range(5):
+            for j in range(5):
+                
+                if current_game[i][j] == -1 and self.turn == -1:
+                    for m in range(-1, 2):
+                        for n in range(-1, 2):
+                            print(f'Tiger Move, [{i},{j}], [{i+m}, {j+n}]')
+                            if self.check_move([i,j], [i+m, j+n])["isValid"]:
+                                child.append([[i,j], [i+m, j+n]])
+
+                            print(f'Tiger Move, [{i},{j}], [{i+2*m}, {j+2*n}]')
+                            if self.check_move([i,j], [i+2*m, j+2*n])["isValid"]:
+                                child.append([[i,j], [i+2 * m, j+2 * n]])
+                                
+                if self.turn == 1 and self.goat_counter < 20:
+                    print(f"Goat Move, placed at {i},{j}.")
+                    if self.check_move(None, [i,j])["isValid"]:
+                        child.append([None, [i,j]])
+
+                if self.turn == 1 and current_game[i][j] == 1:
+                    for m in range(-1, 2):
+                        for n in range(-1, 2):
+                            print(f'Goat Move, [{i},{j}], [{i+m}, {j+n}]')
+                            if self.check_move([i,j], [i+m, j+n])["isValid"]:
+                                child.append([i,j], [i+m, j+n])
+
+        return child

@@ -126,7 +126,7 @@ def recordData():
 
         header += goatHeader
         header += tigerHeader
-        header += ["Value Goat", "Value Tiger"]
+        header += ["Value"]
 
         writer.writerow(header)
 
@@ -135,8 +135,14 @@ def recordData():
             # agentTiger.moveState()
             while not playingGame.game_status_check()["decided"]:
                 gameStatus, playingGame, pgn = agentGoat.move(playingGame, pgn)
+                count += 1
+                
+                if playingGame.game_status_check()["decided"]:
+                    break
+                
                 gameStatus, playingGame, pgn = agentTiger.move(playingGame, pgn)
                 count += 1
+                
                 # print(playingGame.game_history)
                 if count > 100:
                     break
@@ -166,17 +172,19 @@ def recordData():
                 
                 if(playingGame.game_state == GameState.GOAT_WON.value):
                     if k % 2 == 0:
-                        newValue += [1,-1]
+                        newValue += ["XXXXX"]
+                        #k=0, goat -> goat [value goat, value tiger]
+                        # tiger turn -> goat won [value goat, value tiger]
                     else: 
-                        newValue += [-1,1]
+                        newValue += ["O"]
 
                 elif(playingGame.game_state == GameState.TIGER_WON.value):
                     if k % 2 == 0:
-                        newValue += [-1,1]
+                        newValue += ["O"]
                     else: 
-                        newValue += [1,-1]
+                        newValue += ["XXXXX"]
                 else:
-                        newValue += [0,0]
+                        newValue += ["_"]
                         
                 newValue = np.concatenate((value, np.array(newValue)), axis=None)
                 writer.writerow(newValue)
