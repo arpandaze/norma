@@ -155,7 +155,7 @@ class Game:
             else:
                 if position[m][n] != 0:
                     reason = "Target already has a piece!"
-                    print(reason)
+                    #print(reason)
                     return {"isValid": False}
                 
                 return {"isValid": True, "isPlaceMove": True}
@@ -165,12 +165,12 @@ class Game:
 
         if x < 0 or y < 0 or m < 0 or n < 0 or x > 4 or y > 4 or m > 4 or n > 4:
             reason = "Cannot move outside the board!"
-            print(reason)
+            #print(reason)
             return {"isValid": False, "reason": reason}
 
         if self.game_state != GameState.NOT_DECIDED.value:
             reason = "Cannot move after game has been decided!"
-            print(reason)
+            #print(reason)
             return {"isValid": False, "reason": reason}
 
         if not (
@@ -178,18 +178,18 @@ class Game:
             or (self.turn == -1 and position[x][y] == -1)
         ):
             reason = "Cannot move in other's turn!"
-            print(reason)
+            #print(reason)
             return {"isValid": False, "reason": reason}
 
         if self.turn == 1:
             if self.goat_counter < 20:
                 reason = "Can't move goat before all goats are placed"
-                print(reason)
+                #print(reason)
                 return {"isValid": False, "reason": reason}
 
         if position[m][n] != 0:
             reason = "Target already has a piece!"
-            print(reason)
+            #print(reason)
             return {"isValid": False, "reason": reason}
 
         x_diff_abs = abs(x - m)
@@ -201,7 +201,7 @@ class Game:
 
         if x_diff_abs == 0 and y_diff_abs == 0:
             reason = "Source and target can't be same!"
-            print(reason)
+            #print(reason)
             return {"isValid": False, "reason": reason}
 
         # Tiger can jump goats
@@ -216,7 +216,7 @@ class Game:
             if x_diff_abs == 2 and y_diff_abs == 2:
                 if s_sum % 2 != 0:
                     reason = "Cannot jump diagonally from odd positions!"
-                    print(reason)
+                    #print(reason)
                     return {"isValid": False, "reason": reason}
 
             piece_to_capture = [int(x + x_diff / 2), int(y + y_diff / 2)]
@@ -224,7 +224,7 @@ class Game:
             # Check if piece to capture is goat
             if position[piece_to_capture[0]][piece_to_capture[1]] == 1:
                 reason = "Can capture goat!"
-                print(reason)
+                #print(reason)
                 return {
                     "isValid": True,
                     "isCaptureMove": True,
@@ -233,20 +233,20 @@ class Game:
                 }
             else:
                 reason = "Cannot capture tiger!"
-                print(reason)
+                #print(reason)
                 return {"isValid": False, "reason": reason}
 
         # Can't move distance more than 2
         if x_diff_abs > 1 or y_diff_abs > 1:
             reason = "Cannot move distance more than 2!"
-            print(reason)
+            #print(reason)
             return {"isValid": False, "reason": reason}
         # Can't move from odd position to another odd position
         # Example: 0,1 (0+1 = 1 odd) to 1,2 (1+2 = 3 odd)
         elif s_sum % 2:
             if t_sum % 2:
                 reason = "Can't move from odd position to another odd position!"
-                print(reason)
+                #print(reason)
                 return {"isValid": False, "reason": reason}
 
         reason = "Default move!"
@@ -300,29 +300,32 @@ class Game:
         current_game = self.game_history[-1]
         child = []
 
+        if self.game_status_check()["decided"]:
+            return child
+            
         for i in range(5):
             for j in range(5):
                 
                 if current_game[i][j] == -1 and self.turn == -1:
                     for m in range(-1, 2):
                         for n in range(-1, 2):
-                            print(f'Tiger Move, [{i},{j}], [{i+m}, {j+n}]')
+                            # #print(f'Tiger Move, [{i},{j}], [{i+m}, {j+n}]')
                             if self.check_move([i,j], [i+m, j+n])["isValid"]:
                                 child.append([[i,j], [i+m, j+n]])
 
-                            print(f'Tiger Move, [{i},{j}], [{i+2*m}, {j+2*n}]')
+                            # #print(f'Tiger Move, [{i},{j}], [{i+2*m}, {j+2*n}]')
                             if self.check_move([i,j], [i+2*m, j+2*n])["isValid"]:
                                 child.append([[i,j], [i+2 * m, j+2 * n]])
                                 
                 if self.turn == 1 and self.goat_counter < 20:
-                    print(f"Goat Move, placed at {i},{j}.")
+                    # #print(f"Goat Move, placed at {i},{j}.")
                     if self.check_move(None, [i,j])["isValid"]:
                         child.append([None, [i,j]])
 
                 if self.turn == 1 and current_game[i][j] == 1:
                     for m in range(-1, 2):
                         for n in range(-1, 2):
-                            print(f'Goat Move, [{i},{j}], [{i+m}, {j+n}]')
+                            # #print(f'Goat Move, [{i},{j}], [{i+m}, {j+n}]')
                             if self.check_move([i,j], [i+m, j+n])["isValid"]:
                                 child.append([i,j], [i+m, j+n])
 

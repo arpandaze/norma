@@ -24,7 +24,9 @@ class HistoryNode:
             vertex = queue.popleft()
             count += 1
             print(vertex.state, end = ",")
-            
+            print(len(vertex.game.get_possible_state()))
+            print(len(vertex.children))
+
             for child in vertex.children:
                 if child not in visited:
                     visited.append(child)
@@ -36,39 +38,105 @@ class HistoryNode:
 
 
 if __name__ == "__main__":
-    
+
     newGame = Game.new()
-    previousState = ["X"]
-    currentState = [newGame]
     GameHistory = HistoryNode(newGame, copy.deepcopy(newGame.game_history[-1]))
-    
-    parent = GameHistory
-    newParent = [parent]
-     
+
+    grandParents = None
+    parents = [GameHistory]
     childadded = True
+    totalState = 0
 
-    while childadded:
+    currentParent = parents[0]
+    currentState = currentParent.game
+    state = currentState.get_possible_state()
+    totalState += len(state)
 
+    for moves in state:
+        newState = Game(game_id=str(uuid.uuid4()),tiger=currentState.tiger, goat=currentState.goat, goat_counter=currentState.goat_counter, goat_captured=currentState.goat_captured, game_state=currentState.game_state, game_history=copy.deepcopy(currentState.game_history), turn=currentState.turn, socket=currentState.socket)
+        newState.move(moves[0], moves[1], ident_check=False)
+        newGameHistory=HistoryNode(newState, copy.deepcopy(newState.game_history[-1]))
+        currentParent.addChild(newGameHistory)
+
+    grandParents = parents
+    parents = currentParent.children
+
+    while childadded: 
         childadded = False
 
-        for child in newParent:
-            # child.printState()
-            currentState = child.game
-            state = currentState.get_possible_state()
-           
-            for moves in state:
-                newState = Game(game_id=str(uuid.uuid4()),tiger=currentState.tiger, goat=currentState.goat, goat_counter=currentState.goat_counter, goat_captured=currentState.goat_captured, game_state=currentState.game_state, game_history=copy.deepcopy(currentState.game_history), turn=currentState.turn, socket=currentState.socket)
-                newState.move(moves[0], moves[1], ident_check=False)
-                print(newState.turn)
-                newGameHistory = HistoryNode(newState, copy.deepcopy(newState.game_history[-1]))
-                child.addChild(newGameHistory)
-                parent = child
-                childadded = True
+        parentsList = []   
 
-        
-        newParent = parent.children        
-           
+        for grandparent in grandParents:
+            parents = grandparent.children
+            print('Parent List', len(parents))
+            parentsList += parents
+
+            for parent in parents:
+                currentParent = parent
+                currentState = currentParent.game
+                state = currentState.get_possible_state()
+                print("States", parent.state, len(state))
+                totalState += len(state)
+
+                for moves in state:
+                    newState = Game(game_id=str(uuid.uuid4()),tiger=currentState.tiger, goat=currentState.goat, goat_counter=currentState.goat_counter, goat_captured=currentState.goat_captured, game_state=currentState.game_state, game_history=copy.deepcopy(currentState.game_history), turn=currentState.turn, socket=currentState.socket)
+                    newState.move(moves[0], moves[1], ident_check=False)
+                    newGameHistory = HistoryNode(newState, copy.deepcopy(newState.game_history[-1]))
+                    currentParent.addChild(newGameHistory)
+                    childadded = True
+
+            print("Total States", totalState)
+            
+        print('XXXX', len(parentsList))
+        grandParents = parentsList
+
+    
     GameHistory.printState()
+
+
+    # newGame = Game.new()
+    # currentState = [newGame]
+    # GameHistory = HistoryNode(newGame, copy.deepcopy(newGame.game_history[-1]))
+    # grandParents = None
+    # parents= [GameHistory]
+    # childadded = True
+
+    # currentParent = parents[0]
+    # currentState = currentParent.game
+    # state = currentState.get_possible_state()
+
+    # for moves in state:
+    #     newState = Game(game_id=str(uuid.uuid4()),tiger=currentState.tiger, goat=currentState.goat, goat_counter=currentState.goat_counter, goat_captured=currentState.goat_captured, game_state=currentState.game_state, game_history=copy.deepcopy(currentState.game_history), turn=currentState.turn, socket=currentState.socket)
+    #     newState.move(moves[0], moves[1], ident_check=False)
+    #     newGameHistory = HistoryNode(newState, copy.deepcopy(newState.game_history[-1]))
+    #     currentParent.addChild(newGameHistory)
+
+    # grandParents = copy.deepcopy(parents)
+    # parents = currentParent.children
+
+    # while childadded:
+    #     childadded = False
+
+    #     grandparents = copy.deepcopy(parents)
+    #     parentList = []
+    #     for index, grandParent in enumerate(grandParents):
+    #         parents = grandParent.children[index]
+    #         parentList.append(parents)
+            
+    #         for parent in parents:
+    #             currentParent = parent
+    #             currentState = currentParent.game
+    #             state = currentState.get_possible_state()
+
+    #             for moves in state:
+    #                 newState = Game(game_id=str(uuid.uuid4()),tiger=currentState.tiger, goat=currentState.goat, goat_counter=currentState.goat_counter, goat_captured=currentState.goat_captured, game_state=currentState.game_state, game_history=copy.deepcopy(currentState.game_history), turn=currentState.turn, socket=currentState.socket)
+    #                 newState.move(moves[0], moves[1], ident_check=False)
+    #                 newGameHistory = HistoryNode(newState, copy.deepcopy(newState.game_history[-1]))
+    #                 currentParent.addChild(newGameHistory)
+                
+               
+            
+
 
 
 
