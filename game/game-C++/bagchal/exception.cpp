@@ -5,16 +5,13 @@
 
 using namespace std;
 
-class GameException{
-  public:
-    string message;
-    GameException(string msg){
-      message = msg;
-    }
 
-    string getMessage(GameException obj){
-      stringstream _msg;
-      _msg << obj.message;
-      return _msg.str();
-    }
-};
+GameException::GameException(string msg){
+  message = msg;
+}
+
+string GameException::getMessage(GameException obj){
+  stringstream _msg;
+  _msg << obj.message;
+  return _msg.str();
+}

@@ -6,7 +6,7 @@
 class GameException{
   public:
     std::string message;
-    GameException(std::string msg);
+    GameException(std::string);
     std::string getMessage(GameException obj);
 };
 

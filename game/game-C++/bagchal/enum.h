@@ -1,6 +1,12 @@
 #ifndef ENUM_H
 #define ENUM_H
 
-extern enum GameState;
+enum GameState{
+  NOT_DECIDED = 0,
+  GOAT_WON = 1,
+  TIGER_WON =2
+};
+
+extern GameState gameState;
 
 #endif
