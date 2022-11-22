@@ -20,7 +20,7 @@ G_DRAW = -6
 
 class AlphaBeta:
 
-  def __init__(self,depth=4):
+  def __init__(self,depth=5):
     self.depth = depth
 
   def evaluation(self,board):
@@ -44,19 +44,17 @@ class AlphaBeta:
       return 0
 
   def alpha_beta(self,board,depth=0,alpha=float('-inf'),beta=float('inf'),maximizing_player=True):
-
     if depth == 0 or board.game_status_check().decided:
       return self.evaluation(board), None
-
-    possible_moves = board.get_possible_moves()
-    best_move = None
 
     if maximizing_player:
       maxValue = float('-inf')
       best_move = None
+      possible_moves = board.get_possible_moves()
+
       for i in possible_moves:
-        board_cp = deepcopy(board)
-        board_cp.make_move(i.move[0],i.move[1]) 
+        board_cp = board.copy()
+        board_cp.make_move(*i.move) 
 
         result = self.alpha_beta(board_cp,depth-1,alpha,beta,False)
 
@@ -69,17 +67,16 @@ class AlphaBeta:
         if beta <= alpha:
           break
 
-      if best_move is None:
-        return maxValue, None
-
       return maxValue, best_move
 
     else:
       minValue = float('inf')
       best_move = None
+      possible_moves = board.get_possible_moves()
+
       for i in possible_moves:
-        board_cp = deepcopy(board)
-        board_cp.make_move(i.move[0],i.move[1])
+        board_cp = board.copy()
+        board_cp.make_move(*i.move)
         result = self.alpha_beta(board_cp,depth-1,alpha,beta,True)
 
         if result[0] < minValue:
@@ -91,9 +88,6 @@ class AlphaBeta:
         if beta <= alpha:
           break
 
-      if best_move is None:
-        return minValue, None
-
       return minValue,best_move
 
   def best_bagh_move(self,board):
@@ -104,10 +98,28 @@ class AlphaBeta:
     assert not board.game_status_check().decided
     return self.alpha_beta(board,self.depth, maximizing_player=True)
 
+  def best_move(self,board:Baghchal):
+    if board.turn() == 1:
+      result = self.best_goat_move(board)
+    
+    else:
+      result = self.best_bagh_move(board)
+    
+    return result
+
 
 a = AlphaBeta()
-b = a.best_bagh_move(board=Baghchal.default())
-print(b)
+board = Baghchal.default()
+
+# b = a.best_move(board)
+# print(b)
+
+while not board.game_status_check().decided:
+  res = a.best_move(board)
+  board.make_move(*res[1])
+
+print(board.pgn())
+
 
 
 
