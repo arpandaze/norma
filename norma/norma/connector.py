@@ -12,10 +12,9 @@ from .alphabeta_pruning import AlphaBeta
 
 def get_best_move_pgn(bagchal: Bagchal):
     alpha_object = AlphaBeta()
-    board = bagchal.default()
 
-    result = alpha_object.best_move(board)
-    board.make_move(*result[1])
+    result = alpha_object.best_move(bagchal)
+    bagchal.make_move(*result[1])
 
     return Bagchal.coord_to_png_unit(*result[1])
 

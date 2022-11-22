@@ -1,26 +1,8 @@
 from libbaghchal import Baghchal
 from copy import deepcopy
-
-
-T_GOAT_CAPTURE = 4
-T_GOT_TRAPPED = -2
-T_TRAP_ESCAPE = 1
-T_WIN = 10
-T_LOSE = -10
-T_DRAW = -6
-
-# For Goat
-G_GOAT_CAPTURED = -4
-G_TIGER_TRAP = 2
-G_TIGER_ESCAPE = -1
-G_WIN = 10
-G_LOSE = -10
-G_DRAW = -6
-
-
 class AlphaBeta:
 
-  def __init__(self,depth=5):
+  def __init__(self,depth=4):
     self.depth = depth
 
   def evaluation(self,board):
@@ -106,21 +88,6 @@ class AlphaBeta:
       result = self.best_bagh_move(board)
     
     return result
-
-
-a = AlphaBeta()
-board = Baghchal.default()
-
-# b = a.best_move(board)
-# print(b)
-
-while not board.game_status_check().decided:
-  res = a.best_move(board)
-  board.make_move(*res[1])
-
-print(board.pgn())
-
-
 
 
 
