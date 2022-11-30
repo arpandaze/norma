@@ -21,7 +21,6 @@ def get_best_move_pgn(bagchal: Bagchal):
 
 def on_message(ws, msg):
 
-    print(msg)
     message = json.loads(msg)
 
     if message["type"] == 10:
@@ -48,8 +47,6 @@ def on_message(ws, msg):
         except Exception as e:
             import traceback
 
-            print(traceback.format_exc())
-            print(e)
             raise e
 
 

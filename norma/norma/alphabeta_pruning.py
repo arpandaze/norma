@@ -6,14 +6,17 @@ class Minimax:
   def __init__(self,depth=4):
     self.depth = depth
 
-  def evaluation(self,board):
+  def evaluation(self,board,turn):
     
     total_gcaptured = board.goat_captured()
     total_tiger_trapped = board.trapped_tiger()
     isOver = board.game_status_check().decided
 
     if not isOver:
-      return 100 * total_tiger_trapped - 120 * total_gcaptured
+      if turn == 1:
+        return 150 * total_tiger_trapped - 120 * total_gcaptured 
+      else:
+        return 150 * total_gcaptured - 120 * total_tiger_trapped 
 
     winner = board.game_state()
 
@@ -26,9 +29,9 @@ class Minimax:
     else:
       return 0
 
-  def minimax(self,board,depth=0,maximizing_player=True):
+  def minimax(self,board,turn,depth=0,maximizing_player=True):
     if depth == 0 or board.game_status_check().decided:
-      return self.evaluation(board), None
+      return self.evaluation(board,turn), None
 
     if maximizing_player:
       maxValue = float('-inf')
@@ -39,12 +42,12 @@ class Minimax:
         board_cp = board.copy()
         board_cp.make_move(*i.move) 
 
-        result = self.minimax(board_cp,depth-1,False)
+        result = self.minimax(board_cp,turn,depth-1,False)
 
         if result[0] > maxValue:
           maxValue = result[0]
           best_move = i.move
-          
+
       return maxValue, best_move
 
     else:
@@ -55,28 +58,31 @@ class Minimax:
       for i in possible_moves:
         board_cp = board.copy()
         board_cp.make_move(*i.move)
-        result = self.minimax(board_cp,depth-1,True)
+        result = self.minimax(board_cp,turn,depth-1,True)
 
         if result[0] < minValue:
           minValue = result[0]
           best_move = i.move
+      
+
 
       return minValue,best_move
 
-  def best_bagh_move(self,board):
+  def best_bagh_move(self,board,turn):
     assert not board.game_status_check().decided
-    return self.minimax(board,self.depth, maximizing_player=True) 
+    return self.minimax(board,turn,self.depth, maximizing_player=True) 
     
-  def best_goat_move(self,board):
+  def best_goat_move(self,board,turn):
     assert not board.game_status_check().decided
-    return self.minimax(board,self.depth, maximizing_player=True)
+    return self.minimax(board,turn,self.depth, maximizing_player=True)
 
   def best_move(self,board:Baghchal):
     if board.turn() == 1:
-      result = self.best_goat_move(board)
+      result = self.best_goat_move(board,turn=1)
     else:
-      result = self.best_bagh_move(board)
-    
+      result = self.best_bagh_move(board,turn=-1)
+
+    print(result)
     return result
 
 # a = Minimax()
@@ -90,17 +96,20 @@ class Minimax:
 
 class AlphaBeta:
 
-  def __init__(self,depth=4):
+  def __init__(self,depth=6):
     self.depth = depth
 
-  def evaluation(self,board):
-
+  def evaluation(self,board,turn):
+    
     total_gcaptured = board.goat_captured()
     total_tiger_trapped = board.trapped_tiger()
     isOver = board.game_status_check().decided
 
     if not isOver:
-      return 150 * total_tiger_trapped - 120 * total_gcaptured
+      if turn == 1:
+        return 150 * total_tiger_trapped - 120 * total_gcaptured
+      else:
+        return 150 * total_gcaptured - 120 * total_tiger_trapped
 
     winner = board.game_state()
 
@@ -113,9 +122,9 @@ class AlphaBeta:
     else:
       return 0
 
-  def alpha_beta(self,board,depth=0,alpha=float('-inf'),beta=float('inf'),maximizing_player=True):
+  def alpha_beta(self,board,turn,depth=0,alpha=float('-inf'),beta=float('inf'),maximizing_player=True):
     if depth == 0 or board.game_status_check().decided:
-      return self.evaluation(board), None
+      return self.evaluation(board,turn), None
 
     if maximizing_player:
       maxValue = float('-inf')
@@ -126,7 +135,7 @@ class AlphaBeta:
         board_cp = board.copy()
         board_cp.make_move(*i.move) 
 
-        result = self.alpha_beta(board_cp,depth-1,alpha,beta,False)
+        result = self.alpha_beta(board_cp,turn,depth-1,alpha,beta,False)
 
         if result[0] > maxValue:
           maxValue = result[0]
@@ -147,7 +156,7 @@ class AlphaBeta:
       for i in possible_moves:
         board_cp = board.copy()
         board_cp.make_move(*i.move)
-        result = self.alpha_beta(board_cp,depth-1,alpha,beta,True)
+        result = self.alpha_beta(board_cp,turn,depth-1,alpha,beta,True)
 
         if result[0] < minValue:
           minValue = result[0]
@@ -160,19 +169,19 @@ class AlphaBeta:
 
       return minValue,best_move
 
-  def best_bagh_move(self,board):
+  def best_bagh_move(self,board,turn):
     assert not board.game_status_check().decided
-    return self.alpha_beta(board,self.depth, maximizing_player=True) 
+    return self.alpha_beta(board,turn,self.depth, maximizing_player=True) 
     
-  def best_goat_move(self,board):
+  def best_goat_move(self,board,turn):
     assert not board.game_status_check().decided
-    return self.alpha_beta(board,self.depth, maximizing_player=True)
+    return self.alpha_beta(board,turn,self.depth, maximizing_player=True)
 
   def best_move(self,board:Baghchal):
     if board.turn() == 1:
-      result = self.best_goat_move(board)
-    
+      result = self.best_goat_move(board,turn=1)
     else:
-      result = self.best_bagh_move(board)
-    
+      result = self.best_bagh_move(board,turn=-1)
+
+    print(result)
     return result
