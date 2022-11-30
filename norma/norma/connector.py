@@ -7,11 +7,11 @@ import websocket
 # from bagchal import Bagchal
 from libbaghchal import Baghchal as Bagchal
 
-from .alphabeta_pruning import AlphaBeta
+from .alphabeta_pruning import AlphaBeta, Minimax
 
 
 def get_best_move_pgn(bagchal: Bagchal):
-    alpha_object = AlphaBeta()
+    alpha_object = Minimax()
 
     result = alpha_object.best_move(bagchal)
     bagchal.make_move(*result[1])
@@ -21,7 +21,6 @@ def get_best_move_pgn(bagchal: Bagchal):
 
 def on_message(ws, msg):
 
-    print("here")
     print(msg)
     message = json.loads(msg)
 
