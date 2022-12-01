@@ -1,10 +1,9 @@
 import json
 
-import numpy
 import rel
 import websocket
 
-# from bagchal import Bagchal
+
 from libbaghchal import Baghchal as Bagchal
 
 from .model import MM
@@ -32,20 +31,21 @@ def on_message(ws, msg):
                 game_history=message["game"]["game_history"],
                 pgn=message["game"]["pgn"],
             )
-            game.set_rewards(t_goat_capture = 7,
-            t_got_trapped = -5,
-            t_trap_escape = 3,
-            t_win = 10,
-            t_lose = -10,
-            t_draw = -3,
-            t_move = -0.25,
-            g_goat_captured = -7,
-            g_tiger_trap = 5,
-            g_tiger_escape = -3,
-            g_win = 10,
-            g_lose = -10,
-            g_draw = -3,
-            g_move = -0.25
+            game.set_rewards(
+                t_goat_capture=7,
+                t_got_trapped=-5,
+                t_trap_escape=3,
+                t_win=10,
+                t_lose=-10,
+                t_draw=-3,
+                t_move=-0.25,
+                g_goat_captured=-7,
+                g_tiger_trap=5,
+                g_tiger_escape=-3,
+                g_win=10,
+                g_lose=-10,
+                g_draw=-3,
+                g_move=-0.25,
             )
             pgn_unit = get_best_move_pgn(game)
 

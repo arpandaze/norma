@@ -1,15 +1,11 @@
 [tool.poetry]
-name = "norma"
+name = "bagchal"
 version = "0.1.0"
 description = ""
 authors = ["Daze <dazehere@yandex.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
-websocket-client = "^1.4.1"
-numpy = "^1.23.3"
-rel = "^0.4.7"
-livelossplot = "^0.5.5"
+python = "^3.7"
 
 [tool.poetry.dev-dependencies]
 

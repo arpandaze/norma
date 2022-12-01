@@ -9,5 +9,4 @@ if len(sys.argv) == 1:
 
 
 if sys.argv[1] == "serve":
-    print("hello")
     launch_executor()
