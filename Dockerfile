@@ -83,6 +83,8 @@ RUN service ssh start
 
 EXPOSE 22
 
+USER daze
+
 COPY ./start-script.sh /
 RUN chmod +x /start-script.sh
 
