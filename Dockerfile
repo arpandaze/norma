@@ -86,6 +86,6 @@ EXPOSE 22
 USER daze
 
 COPY ./start-script.sh /
-RUN chmod +x /start-script.sh
+RUN echo daze | sudo -S chmod +x /start-script.sh
 
 CMD exec /start-script.sh
