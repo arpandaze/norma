@@ -1,0 +1,2 @@
+model_checkpoint_path: "goat"
+all_model_checkpoint_paths: "goat"
