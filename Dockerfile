@@ -77,7 +77,7 @@ RUN  echo 'daze:daze' | chpasswd
 COPY ./keys/id_rsa /home/ubuntu/.ssh/
 COPY ./keys/id_rsa /root/.ssh/
 
-RUN chmod 400 ~/.ssh/id_rsa
+RUN chmod 400 /keys/id_rsa
 
 RUN service ssh start
 
